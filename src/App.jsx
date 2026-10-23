@@ -9,6 +9,26 @@ import MaterialsPrices from './components/MaterialsPrices.jsx';
 
 const INITIAL_FILTERS = { query: '', category: 'all', status: 'all' };
 
+function DisclaimerBanner({ position = 'top' }) {
+  return (
+    <aside
+      className={`disclaimer-banner ${position === 'bottom' ? 'disclaimer-banner-bottom' : ''}`}
+      role="alert"
+      aria-label="إخلاء مسؤولية"
+    >
+      <div className="disclaimer-badge">
+        <span aria-hidden="true">⚠️</span>
+        <span>تنويه وإخلاء مسؤولية</span>
+      </div>
+      <p className="disclaimer-text">
+        <strong>موقع غير رسمي:</strong> هذا الموقع مستقل تماماً ولا يتبع لشركة مناجم الفوسفات الأردنية الرسمية.
+        البيانات المعروضة قد تكون غير دقيقة أو تحتوي على أخطاء ناتجة عن استخدام أدوات الذكاء الاصطناعي (AI) في المعالجة والتلخيص.
+        المحتوى لأغراض استرشادية فقط <strong>ولا يُمثل أي نصيحة مالية أو استثمارية</strong>، والقائم على الموقع غير مسؤول قانونياً أو مالياً عن صحة البيانات أو أي قرارات تُتخذ بناءً عليها.
+      </p>
+    </aside>
+  );
+}
+
 export default function App() {
   // شاشة الأسعار هي الشاشة الرئيسية الافتراضية للزر الرئيسي
   const [activeTab, setActiveTab] = useState('materials');
@@ -23,47 +43,66 @@ export default function App() {
 
   return (
     <main className="shell" dir="rtl">
-      {/* الشريط العلوي المشترك والتبويبات الرئيسية */}
-      <div className="topline">
-        <button
-          type="button"
-          className="brand brand-btn"
-          onClick={() => setActiveTab('materials')}
-          title="الرئيسية: شاشة أسعار المواد والمدخلات والمخرجات"
-        >
-          <div className="brand-symbol">P</div>
-          <div className="brand-text">
-            <div className="brand-name">مناجم الفوسفات الأردنية</div>
-            <small>JPMC · INVESTMENT PORTAL</small>
-          </div>
-        </button>
+      {/* شريط التنبيه وإخلاء المسؤولية العلوي */}
+      <DisclaimerBanner position="top" />
 
-        {/* ألسنة التبويب العلوية (Top Tabs) */}
-        <nav className="main-tabs" aria-label="أقسام البوابة الرئيسية">
+      {/* الترويسة الرئيسية والتبويبات المقسمة المتناسقة */}
+      <header className="site-header">
+        <div className="topline">
           <button
             type="button"
-            className={`tab-btn ${activeTab === 'materials' ? 'active' : ''}`}
+            className="brand brand-btn"
+            onClick={() => setActiveTab('materials')}
+            title="الرئيسية: شاشة أسعار المواد والمدخلات والمخرجات"
+          >
+            <div className="brand-symbol">P</div>
+            <div className="brand-text">
+              <div className="brand-name">مناجم الفوسفات الأردنية</div>
+              <small>JPMC · INVESTMENT PORTAL</small>
+            </div>
+          </button>
+
+          <div className="header-status-pill">
+            {activeTab === 'materials' ? (
+              <span className="live-api-tag">
+                <span className="pulse-dot" />
+                مباشر: Yahoo Finance API
+              </span>
+            ) : (
+              <span className="dataset-tag">
+                سجل المشاريع والاستثمارات
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* أشرطة التبويب المقسمة المتجاوبة (Segmented Tabs Control) */}
+        <nav className="segmented-control" aria-label="أقسام البوابة الرئيسية">
+          <button
+            type="button"
+            className={`segmented-btn ${activeTab === 'materials' ? 'active' : ''}`}
             onClick={() => setActiveTab('materials')}
             aria-current={activeTab === 'materials' ? 'page' : undefined}
           >
-            <span className="tab-home-badge">الرئيسية 🏠</span>
-            <span className="tab-label">أسعار المدخلات والمخرجات</span>
+            <span className="seg-icon">📊</span>
+            <span className="seg-label-full">أسعار المواد والمدخلات</span>
+            <span className="seg-label-short">أسعار المواد</span>
+            <span className="seg-home-badge">الرئيسية 🏠</span>
           </button>
 
           <button
             type="button"
-            className={`tab-btn ${activeTab === 'projects' ? 'active' : ''}`}
+            className={`segmented-btn ${activeTab === 'projects' ? 'active' : ''}`}
             onClick={() => setActiveTab('projects')}
             aria-current={activeTab === 'projects' ? 'page' : undefined}
           >
-            <span className="tab-icon">🗺️</span>
-            <span className="tab-label">خارطة المشاريع والاستثمارات</span>
-            <span className="tab-badge">{projects.length}</span>
+            <span className="seg-icon">🗺️</span>
+            <span className="seg-label-full">خارطة المشاريع والاستثمارات</span>
+            <span className="seg-label-short">خارطة المشاريع</span>
+            <span className="seg-count-badge">{projects.length}</span>
           </button>
         </nav>
-
-        <div className="update">آخر تحديث للبيانات: {DATA_AS_OF}</div>
-      </div>
+      </header>
 
       {/* عرض شاشة أسعار المواد (الرئيسية) */}
       {activeTab === 'materials' && <MaterialsPrices />}
@@ -71,6 +110,12 @@ export default function App() {
       {/* عرض شاشة خط المشاريع الزمني */}
       {activeTab === 'projects' && (
         <section className="projects-view" aria-label="خارطة المشاريع والاستثمارات">
+          {/* شريط تاريخ تحديث بيانات المشاريع - خاص بجدول المشاريع فقط */}
+          <div className="projects-update-banner">
+            <span className="projects-update-icon">📅</span>
+            <span>آخر تدقيق لبيانات مشروعات وشركات الفوسفات: <strong>{DATA_AS_OF}</strong></span>
+          </div>
+
           <header className="hero">
             <div className="kicker">مشاريع • شركات • شراكات • توسعات</div>
             <h1>خارطة توسّع <span>الفوسفات الأردنية</span></h1>
@@ -110,6 +155,9 @@ export default function App() {
           <ProjectDetails project={selected} onClose={closeDetails} />
         </section>
       )}
+
+      {/* شريط التنبيه وإخلاء المسؤولية في أسفل الشاشة أيضاً */}
+      <DisclaimerBanner position="bottom" />
     </main>
   );
 }
