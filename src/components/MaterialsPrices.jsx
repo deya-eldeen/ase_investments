@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { fetchAllMaterialQuotes, fetchYahooQuote } from '../utils/financeApi.js';
+import { fetchAllMaterialQuotes, generateFallbackSeries } from '../utils/financeApi.js';
 
 // كتالوج المواد الأساسية المرتبطة بمؤشرات وعقود بورصات عالمية
 const MATERIALS_CATALOG = [
@@ -173,47 +173,91 @@ const MATERIALS_CATALOG = [
   }
 ];
 
-// رسم مصغر بياني SVG متفاعل مع حركة الأسعار الحية
-function SparklineChart({ data = [], isPositive = true }) {
+// رسم بياني SVG تفاعلي عالي الدقة يدعم تدرجات الظل ونقاط البيانات
+function SparklineChart({ data = [], isPositive = true, height = 46, idPrefix = 'chart' }) {
   if (!data || data.length < 2) return null;
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
-  const width = 140;
-  const height = 44;
-  const points = data
-    .map((val, idx) => {
-      const x = (idx / (data.length - 1)) * width;
-      const y = height - ((val - min) / range) * (height - 10) - 5;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
-
+  const width = 160;
   const strokeColor = isPositive ? '#27caa7' : '#e97881';
+  const gradId = `spark-grad-${idPrefix}`;
+
+  const points = data.map((val, idx) => {
+    const x = (idx / (data.length - 1)) * width;
+    const y = height - ((val - min) / range) * (height - 12) - 6;
+    return { x, y, val };
+  });
+
+  const polylinePoints = points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const polygonPoints = `0,${height} ${polylinePoints} ${width},${height}`;
+  const lastPoint = points[points.length - 1];
 
   return (
     <svg className="sparkline-svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={strokeColor} stopOpacity="0.32" />
+          <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+      <polygon points={polygonPoints} fill={`url(#${gradId})`} />
       <polyline
         fill="none"
         stroke={strokeColor}
         strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        points={points}
+        points={polylinePoints}
       />
+      {lastPoint && (
+        <circle
+          cx={lastPoint.x}
+          cy={lastPoint.y}
+          r="3.5"
+          fill={strokeColor}
+          stroke="#09101d"
+          strokeWidth="1.5"
+        />
+      )}
     </svg>
   );
 }
 
-// بطاقة عرض المادة مع الربط المباشر بـ Yahoo Finance API
+// بطاقة عرض المادة مع الرسمين البيانيين (آخر 3 أشهر + آخر أسبوع)
 function PriceCard({ item, quote, loading }) {
   const hasLiveQuote = !!quote;
   const price = hasLiveQuote ? quote.price : item.basePrice;
   const changePercent = hasLiveQuote ? quote.changePercent : 0;
   const isPositive = changePercent >= 0;
-  const sparklineData = hasLiveQuote && quote.sparkline ? quote.sparkline : [price * 0.98, price * 0.99, price, price * 1.01, price];
-  const dayHigh = hasLiveQuote ? quote.high : (price * 1.02).toFixed(2);
-  const dayLow = hasLiveQuote ? quote.low : (price * 0.98).toFixed(2);
+
+  // استخراج سلسلة 3 أشهر وسلسلة الأسبوع الأخير
+  const history3m = hasLiveQuote && quote.history3m && quote.history3m.length >= 5
+    ? quote.history3m
+    : generateFallbackSeries(price, 65, 0.05);
+
+  const history1w = hasLiveQuote && quote.history1w && quote.history1w.length >= 3
+    ? quote.history1w
+    : history3m.slice(-7);
+
+  // حساب نسب التغير والأعلى والأدنى لكل من الفترتين
+  const weekStart = history1w[0] || price;
+  const weekEnd = history1w[history1w.length - 1] || price;
+  const weekChangePercent = hasLiveQuote && typeof quote.weekChangePercent === 'number'
+    ? quote.weekChangePercent
+    : (weekStart ? Number((((weekEnd - weekStart) / weekStart) * 100).toFixed(2)) : 0);
+  const isWeekPositive = weekChangePercent >= 0;
+  const weekMin = Math.min(...history1w);
+  const weekMax = Math.max(...history1w);
+
+  const m3Start = history3m[0] || price;
+  const m3End = history3m[history3m.length - 1] || price;
+  const m3ChangePercent = hasLiveQuote && typeof quote.m3ChangePercent === 'number'
+    ? quote.m3ChangePercent
+    : (m3Start ? Number((((m3End - m3Start) / m3Start) * 100).toFixed(2)) : 0);
+  const isM3Positive = m3ChangePercent >= 0;
+  const m3Min = Math.min(...history3m);
+  const m3Max = Math.max(...history3m);
 
   return (
     <article className={`price-card price-card-${item.type}`}>
@@ -249,7 +293,7 @@ function PriceCard({ item, quote, loading }) {
 
           <div className={`price-change-pill ${isPositive ? 'positive' : 'negative'}`}>
             <span>{isPositive ? '▲' : '▼'}</span>
-            <span>{Math.abs(changePercent).toFixed(2)}%</span>
+            <span>{Math.abs(changePercent).toFixed(2)}% (يومي)</span>
           </div>
         </div>
 
@@ -262,35 +306,71 @@ function PriceCard({ item, quote, loading }) {
         </div>
       </div>
 
-      {/* مساحة المخطط البياني المباشر من بيانات API */}
-      <div className="chart-live-box">
-        <div className="chart-live-header">
-          <span className="chart-live-title">مسار الحركة الأخيرة (5 أيام تداول)</span>
-          <span className={`chart-trend-tag ${isPositive ? 'trend-up' : 'trend-down'}`}>
-            {isPositive ? 'اتجاه صاعد' : 'اتجاه هابط'}
-          </span>
+      {/* =================================================================== */}
+      {/* عرض الرسمين البيانيين: 1) آخر أسبوع  2) آخر 3 أشهر */}
+      {/* =================================================================== */}
+      <div className="dual-charts-grid">
+        {/* الرسم الأول: آخر أسبوع */}
+        <div className="sub-chart-panel">
+          <div className="sub-chart-top">
+            <span className="sub-chart-name">📅 آخر أسبوع (7 أيام)</span>
+            <span className={`sub-chart-delta ${isWeekPositive ? 'delta-pos' : 'delta-neg'}`}>
+              {isWeekPositive ? '▲' : '▼'} {Math.abs(weekChangePercent).toFixed(1)}%
+            </span>
+          </div>
+          <div className="sub-chart-render">
+            <SparklineChart
+              data={history1w}
+              isPositive={isWeekPositive}
+              height={44}
+              idPrefix={`${item.id}-1w`}
+            />
+          </div>
+          <div className="sub-chart-limits">
+            <span>أدنى: ${weekMin.toFixed(1)}</span>
+            <span>أعلى: ${weekMax.toFixed(1)}</span>
+          </div>
         </div>
-        <div className="chart-svg-container">
-          <SparklineChart data={sparklineData} isPositive={isPositive} />
+
+        {/* الرسم الثاني: آخر 3 أشهر */}
+        <div className="sub-chart-panel">
+          <div className="sub-chart-top">
+            <span className="sub-chart-name">📈 آخر 3 أشهر (فصلي)</span>
+            <span className={`sub-chart-delta ${isM3Positive ? 'delta-pos' : 'delta-neg'}`}>
+              {isM3Positive ? '▲' : '▼'} {Math.abs(m3ChangePercent).toFixed(1)}%
+            </span>
+          </div>
+          <div className="sub-chart-render">
+            <SparklineChart
+              data={history3m}
+              isPositive={isM3Positive}
+              height={44}
+              idPrefix={`${item.id}-3m`}
+            />
+          </div>
+          <div className="sub-chart-limits">
+            <span>أدنى: ${m3Min.toFixed(1)}</span>
+            <span>أعلى: ${m3Max.toFixed(1)}</span>
+          </div>
         </div>
       </div>
 
       {/* تفاصيل إحصائية من واقع تداولات السوق */}
       <div className="price-stats-grid">
         <div className="stat-slot">
-          <span className="stat-slot-label">أعلى سعر (يومي/أخير)</span>
-          <span className="stat-slot-value">${Number(dayHigh).toFixed(2)}</span>
+          <span className="stat-slot-label">نطاق 3 أشهر (أعلى/أدنى)</span>
+          <span className="stat-slot-value">${m3Max.toFixed(1)} / ${m3Min.toFixed(1)}</span>
         </div>
         <div className="stat-slot">
-          <span className="stat-slot-label">أدنى سعر (يومي/أخير)</span>
-          <span className="stat-slot-value">${Number(dayLow).toFixed(2)}</span>
+          <span className="stat-slot-label">نطاق الأسبوع الأخير</span>
+          <span className="stat-slot-value">${weekMax.toFixed(1)} / ${weekMin.toFixed(1)}</span>
         </div>
         <div className="stat-slot">
           <span className="stat-slot-label">مصدر التغذية</span>
           <span className="stat-slot-value" style={{ color: '#27caa7' }}>Yahoo Finance</span>
         </div>
         <div className="stat-slot">
-          <span className="stat-slot-label">حالة السوق</span>
+          <span className="stat-slot-label">حالة التداول</span>
           <span className="stat-slot-value" style={{ color: '#a4cdfa' }}>نشط / معتمد</span>
         </div>
       </div>
@@ -298,7 +378,7 @@ function PriceCard({ item, quote, loading }) {
       {/* وصف المادة وأهميتها التشغيلية */}
       <p className="price-card-desc">{item.description}</p>
 
-      {/* تذييل البطاقة وإجراءات الإضافة */}
+      {/* تذييل البطاقة */}
       <div className="price-card-footer">
         <span className="price-card-benchmark-note">
           <strong>المرجع:</strong> {item.benchmark}
@@ -495,20 +575,6 @@ export default function MaterialsPrices() {
                   loading={loading}
                 />
               ))}
-
-              {/* بطاقة صندوق فارغ لإضافة منتج مخرج جديد */}
-              <article className="price-card price-card-add">
-                <div className="add-box-content">
-                  <div className="add-box-icon add-box-icon-output">＋</div>
-                  <h3>إضافة منتج مخرج جديد</h3>
-                  <p>
-                    حجز صندوق فارغ لأي منتج أسمدة مركب، حامض إضافي، أو تصنيف تصديري مستجد للشركة.
-                  </p>
-                  <button type="button" className="add-box-btn">
-                    حجز صندوق منتج جديد
-                  </button>
-                </div>
-              </article>
             </div>
           ) : (
             <div className="section-empty-msg">
@@ -546,20 +612,6 @@ export default function MaterialsPrices() {
                   loading={loading}
                 />
               ))}
-
-              {/* بطاقة صندوق فارغ لإضافة مدخل أو تكلفة جديدة */}
-              <article className="price-card price-card-add">
-                <div className="add-box-content">
-                  <div className="add-box-icon add-box-icon-input">＋</div>
-                  <h3>إضافة مدخل أو تكلفة جديدة</h3>
-                  <p>
-                    حجز صندوق فارغ لمادة كيميائية مساعدة، تعرفة مياه صناعية، أو مؤشر شحن إضافي.
-                  </p>
-                  <button type="button" className="add-box-btn">
-                    حجز صندوق مدخل جديد
-                  </button>
-                </div>
-              </article>
             </div>
           ) : (
             <div className="section-empty-msg">

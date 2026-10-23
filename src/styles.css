@@ -1710,50 +1710,71 @@ button:focus-visible,input:focus-visible {
   color: #7b8ea7;
 }
 
-/* Live Chart Box */
-.chart-live-box {
+/* Dual Charts Grid: 1) Last Week, 2) Last 3 Months */
+.dual-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.sub-chart-panel {
   background: #08101d;
   border: 1px solid #1f3047;
   border-radius: 12px;
-  padding: 10px 14px 8px;
+  padding: 9px 12px 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
-.chart-live-header {
+.sub-chart-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10.5px;
+  gap: 6px;
 }
 
-.chart-live-title {
-  color: #7d92ad;
-}
-
-.chart-trend-tag {
+.sub-chart-name {
+  font-size: 11px;
   font-weight: 750;
-  font-size: 10px;
+  color: #8fa5c2;
 }
 
-.chart-trend-tag.trend-up {
+.sub-chart-delta {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.sub-chart-delta.delta-pos {
   color: #4ce5bf;
 }
 
-.chart-trend-tag.trend-down {
+.sub-chart-delta.delta-neg {
   color: #ffa4ac;
 }
 
-.chart-svg-container {
+.sub-chart-render {
   width: 100%;
-  height: 44px;
+  height: 46px;
 }
 
 .sparkline-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.sub-chart-limits {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9.5px;
+  color: #647a95;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  border-top: 1px solid #152236;
+  padding-top: 3px;
+  margin-top: 2px;
 }
 
 /* Stats Slots */
@@ -1816,78 +1837,6 @@ button:focus-visible,input:focus-visible {
   font-size: 10px;
   color: #556880;
   font-family: ui-monospace, monospace;
-}
-
-/* Add Custom Card Box */
-.price-card-add {
-  border: 2px dashed #2d3e58;
-  background: #0d16275c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 380px;
-}
-
-.add-box-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  max-width: 280px;
-  padding: 20px;
-}
-
-.add-box-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #19263c;
-  border: 1px solid #344866;
-  display: grid;
-  place-items: center;
-  font-size: 26px;
-  color: #65a4fa;
-}
-
-.add-box-icon-output {
-  color: #27caa7;
-  border-color: #2da68966;
-}
-
-.add-box-icon-input {
-  color: #eeb763;
-  border-color: #eeb76366;
-}
-
-.add-box-content h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #dbe7f5;
-}
-
-.add-box-content p {
-  font-size: 12px;
-  color: #7d90a8;
-  margin: 0;
-  line-height: 1.6;
-}
-
-.add-box-btn {
-  margin-top: 8px;
-  background: #1b2f48;
-  border: 1px solid #35537d;
-  color: #a4cdfa;
-  padding: 8px 16px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 700;
-  transition: all .15s ease;
-}
-
-.add-box-btn:hover {
-  background: #254165;
-  color: #ffffff;
 }
 
 /* Mobile & Tablet Adjustments for Navigation & Segmented Tabs */
@@ -1969,5 +1918,10 @@ button:focus-visible,input:focus-visible {
 
   .metric-box strong {
     font-size: 18px;
+  }
+
+  .dual-charts-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
