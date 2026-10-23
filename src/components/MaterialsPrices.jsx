@@ -12,8 +12,8 @@ const MATERIALS_CATALOG = [
     grade: '68% - 70% BPL',
     category: 'منتجات التعدين الخام',
     unit: 'دولار / طن (FOB)',
-    ticker: 'MOS',
-    tickerDisplay: 'NYSE: MOS',
+    ticker: 'phosphate-rock',
+    tickerDisplay: 'FOB صخر الفوسفات 68-70% BPL',
     benchmark: 'مؤشر تسعير الفوسفات الخام العالمي',
     basePrice: 152.50,
     description: 'المنتج التعديني الأساسي المستخرج من مناجم الشيدية والحسا والأبيض، والمغذي لكافة مصانع الأسمدة.',
@@ -27,8 +27,8 @@ const MATERIALS_CATALOG = [
     grade: '18-46-0 NPK',
     category: 'أسمدة فوسفاتية نهائية',
     unit: 'دولار / طن (FOB)',
-    ticker: 'MOS',
-    tickerDisplay: 'NYSE: MOS (Phosphate Nutrient)',
+    ticker: 'dap-fertilizer',
+    tickerDisplay: 'FOB سماد الداب العالمي (DAP)',
     benchmark: 'السعر العالمي المعياري لسماد الداب',
     basePrice: 585.00,
     description: 'أهم منتج سمادي تصديري للشركة والمجمعات الصناعية والشراكات المشتركة في العقبة والجنوب.',
@@ -42,8 +42,8 @@ const MATERIALS_CATALOG = [
     grade: 'Merchant Grade (54% P2O5)',
     category: 'صناعات وسيطة وتحويلية',
     unit: 'دولار / طن P2O5',
-    ticker: 'MOS',
-    tickerDisplay: 'Global Acid Proxy (MOS)',
+    ticker: 'phosphoric-acid',
+    tickerDisplay: 'عقود الهند الدورية (CFR India Acid)',
     benchmark: 'سعر عقود الهند الدورية (CFR)',
     basePrice: 980.00,
     description: 'المادة الاستراتيجية الأعلى قيمة، ومحور اتفاقيات التزويد طويلة الأجل للشراكات مع الهند واليابان.',
@@ -57,8 +57,8 @@ const MATERIALS_CATALOG = [
     grade: '11-52-0 NPK',
     category: 'أسمدة فوسفاتية نهائية',
     unit: 'دولار / طن (FOB)',
-    ticker: 'MOS',
-    tickerDisplay: 'MAP Global Benchmark',
+    ticker: 'map-fertilizer',
+    tickerDisplay: 'FOB سماد الماب العالمي (MAP)',
     benchmark: 'المؤشر العالمي لسماد الماب',
     basePrice: 615.00,
     description: 'سماد عالي النقاء وسريع الامتصاص مطلوب في الأسواق الزراعية المتطورة ونظم الري الحديثة.',
@@ -72,8 +72,8 @@ const MATERIALS_CATALOG = [
     grade: 'Industrial Grade (90%+)',
     category: 'كيماويات متخصصة',
     unit: 'دولار / طن',
-    ticker: 'AA',
-    tickerDisplay: 'NYSE: AA (Alumina Chain)',
+    ticker: 'aluminum-fluoride',
+    tickerDisplay: 'AlF3 مصاهر الألمنيوم العالمية',
     benchmark: 'مؤشر مصاهر الألمنيوم العالمي',
     basePrice: 1340.00,
     description: 'يُنتج باستغلال غازات الفلور المنبعثة من مصانع الحامض بالتعاون مع مصانع تدوير الفلورين.',
@@ -87,8 +87,8 @@ const MATERIALS_CATALOG = [
     grade: 'Industrial 98.5% H2SO4',
     category: 'صناعات وسيطة',
     unit: 'دولار / طن',
-    ticker: 'CL=F',
-    tickerDisplay: 'Petrochemical Acid Benchmark',
+    ticker: 'sulfuric-acid',
+    tickerDisplay: 'حامض الكبريتيك الصب الإقليمي',
     benchmark: 'سعر حامض الكبريتيك الصب الإقليمي',
     basePrice: 145.00,
     description: 'يُنتج محلياً بكميات ضخمة في المجمع الصناعي لاستخدامه في معالجة وإذابة الفوسفات لإنتاج الحامض.',
@@ -104,8 +104,8 @@ const MATERIALS_CATALOG = [
     grade: 'NYMEX Henry Hub / MMBtu',
     category: 'طاقة ومرافق تشغيلية',
     unit: 'دولار / مليون وحدة حرارية (MMBtu)',
-    ticker: 'NG=F',
-    tickerDisplay: 'NYMEX: NG=F (مباشر)',
+    ticker: 'natural-gas-energy',
+    tickerDisplay: 'NYMEX: NG=F (Henry Hub)',
     benchmark: 'عقود الغاز الطبيعي الآجلة - بورصة نيويورك',
     basePrice: 2.85,
     description: 'الوقود المحرك لمحطات التوليد الذاتي، ومجففات الفوسفات في المناجم، ومراجل الضغط العالي.',
@@ -119,8 +119,8 @@ const MATERIALS_CATALOG = [
     grade: 'Cold Refrigerated 99.5%',
     category: 'مواد خام استراتيجية',
     unit: 'دولار / طن (CFR العقبة)',
-    ticker: 'CF',
-    tickerDisplay: 'NYSE: CF (Ammonia Leader)',
+    ticker: 'ammonia',
+    tickerDisplay: 'CFR العقبة / أمونيا الخليج العربي',
     benchmark: 'مؤشر أسعار الأمونيا العالمية (الخليج العربي)',
     basePrice: 480.00,
     description: 'المصدر النيتروجيني الحرج الداخل في تفاعل إنتاج أسمدة الفوسفات المركبة (DAP / MAP).',
@@ -134,8 +134,8 @@ const MATERIALS_CATALOG = [
     grade: 'Purity 99.5%+',
     category: 'مواد خام استراتيجية',
     unit: 'دولار / طن (CFR العقبة)',
-    ticker: 'CL=F',
-    tickerDisplay: 'NYMEX: CL=F (Petro Factor)',
+    ticker: 'sulfur',
+    tickerDisplay: 'CFR العقبة / كبريت الشرق الأوسط',
     benchmark: 'مؤشر كبريت الشرق الأوسط والخليج',
     basePrice: 195.00,
     description: 'المدخل الأساسي لمصانع حامض الكبريتيك، ويشكل العامل الأكبر في تحديد تكلفة طن سماد الداب.',
@@ -149,8 +149,8 @@ const MATERIALS_CATALOG = [
     grade: 'Baltic Dry Bulk Proxy',
     category: 'تكاليف لوجستية وتشغيل',
     unit: 'مؤشر الشحن / دولار',
-    ticker: 'BDRY',
-    tickerDisplay: 'NYSE: BDRY (Dry Bulk ETF)',
+    ticker: 'freight-logistics',
+    tickerDisplay: 'NYSE: BDRY (مؤشر الشحن الصب)',
     benchmark: 'مؤشر البلطيق للشحن الصب (العقبة - الهند/آسيا)',
     basePrice: 6.50,
     description: 'تكاليف شحن المواد الخام المستوردة إلى ميناء العقبة، ونقل صادرات الفوسفات إلى الهند ودول شرق آسيا.',
@@ -164,8 +164,8 @@ const MATERIALS_CATALOG = [
     grade: 'Standard Chemical Grade',
     category: 'مواد خام كيماوية',
     unit: 'دولار / طن',
-    ticker: 'AA',
-    tickerDisplay: 'NYSE: AA (Alumina Ref)',
+    ticker: 'aluminum-hydroxide',
+    tickerDisplay: 'مؤشر هيدرات الألمنيوم الكيماوي',
     benchmark: 'مؤشر خام الألمنيوم العالمي',
     basePrice: 420.00,
     description: 'المدخل الأساسي المتفاعل مع حامض الفلوسيليسيك لإنتاج فلوريد الألمنيوم عالي القيمة.',
@@ -573,7 +573,7 @@ export default function MaterialsPrices() {
                 <PriceCard
                   key={item.id}
                   item={item}
-                  quote={quotes[item.ticker]}
+                  quote={quotes[item.id] || quotes[item.ticker]}
                   loading={loading}
                 />
               ))}
@@ -610,7 +610,7 @@ export default function MaterialsPrices() {
                 <PriceCard
                   key={item.id}
                   item={item}
-                  quote={quotes[item.ticker]}
+                  quote={quotes[item.id] || quotes[item.ticker]}
                   loading={loading}
                 />
               ))}
