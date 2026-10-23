@@ -57,8 +57,8 @@ export default function App() {
           >
             <div className="brand-symbol">P</div>
             <div className="brand-text">
-              <div className="brand-name">مناجم الفوسفات الأردنية</div>
-              <small>JPMC · INVESTMENT PORTAL</small>
+              <div className="brand-name">محبوا سهم مناجم الفوسفات الأردنية</div>
+              <small>بوابة استثمارية غير رسمية · JPMC INVESTORS</small>
             </div>
           </button>
 
