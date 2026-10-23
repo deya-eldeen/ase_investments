@@ -302,7 +302,7 @@ function PriceCard({ item, quote, loading }) {
             <span className="api-dot" />
             <span>{item.tickerDisplay}</span>
           </div>
-          <span className="api-live-label">{hasLiveQuote ? 'مباشر من البورصة' : 'مؤشر مرجعي'}</span>
+          <span className="api-live-label">{hasLiveQuote ? quote.source : 'مؤشر مرجعي'}</span>
         </div>
       </div>
 
@@ -367,7 +367,9 @@ function PriceCard({ item, quote, loading }) {
         </div>
         <div className="stat-slot">
           <span className="stat-slot-label">مصدر التغذية</span>
-          <span className="stat-slot-value" style={{ color: '#27caa7' }}>Yahoo Finance</span>
+          <span className="stat-slot-value" style={{ color: '#27caa7' }}>
+            {hasLiveQuote ? quote.source : 'مؤشر مرجعي'}
+          </span>
         </div>
         <div className="stat-slot">
           <span className="stat-slot-label">حالة التداول</span>
@@ -455,7 +457,7 @@ export default function MaterialsPrices() {
         <div className="live-feed-info">
           <span className="live-radar-dot" />
           <div className="live-feed-text">
-            <strong>بث أسعار حي عبر Yahoo Finance API:</strong>
+            <strong>بث أسعار مباشر للمواد والمؤشرات:</strong>
             <span>
               {lastFetchedTime
                 ? ` تم التحديث اللحظي: ${lastFetchedTime.toLocaleTimeString('ar-JO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`

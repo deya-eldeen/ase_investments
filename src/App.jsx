@@ -66,7 +66,7 @@ export default function App() {
             {activeTab === 'materials' ? (
               <span className="live-api-tag">
                 <span className="pulse-dot" />
-                مباشر: Yahoo Finance API
+                مباشر: مؤشرات الأسواق
               </span>
             ) : (
               <span className="dataset-tag">
