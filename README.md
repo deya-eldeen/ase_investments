@@ -20,7 +20,7 @@ npm run build
 npm run preview
 ```
 
-Deploy the generated `dist/` directory to a static web host. A React build is **not** a standalone HTML file you open using `file://`; use the Vite server or deploy `dist/`.
+Deploy the generated `docs/` directory to a static web host (or GitHub Pages). A React build is **not** a standalone HTML file you open using `file://`; use the Vite server or deploy `docs/`.
 
 ## Project structure
 
